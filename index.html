@@ -8,28 +8,61 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#090d18;--bg2:#0d1220;--bg3:#121929;--bd:#1a2640;--tx:#bfcfe8;--tx2:#5c7494;--tx3:#3a5070;--mono:'JetBrains Mono',monospace;--sans:'Noto Sans TC',sans-serif}
-body{background:var(--bg);color:var(--tx);font-family:var(--sans);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+:root{
+  --bg:#090d18;--bg2:#0d1220;--bg3:#121929;--bd:#1a2640;
+  --tx:#bfcfe8;--tx2:#5c7494;--tx3:#3a5070;
+  --accent:#3b82f6;
+  --sb-w:224px;
+  --top-h:48px;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Noto Sans TC',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);display:flex;flex-direction:column}
 
-/* TOPBAR */
-.top{display:flex;align-items:center;gap:10px;padding:0 16px;height:46px;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0;z-index:10}
-.tls{display:flex;gap:5px}.tl{width:11px;height:11px;border-radius:50%}
+/* ── TOPBAR ── */
+.top{
+  display:flex;align-items:center;gap:8px;
+  padding:0 14px;height:var(--top-h);
+  background:var(--bg2);border-bottom:1px solid var(--bd);
+  flex-shrink:0;z-index:200;position:relative;
+}
+.tls{display:flex;gap:5px;flex-shrink:0}
+.tl{width:11px;height:11px;border-radius:50%}
 .tl-r{background:#ff5f56}.tl-y{background:#febc2e}.tl-g{background:#28c840}
-.logo{font-family:var(--mono);font-size:13px;font-weight:600;color:#60a5fa;margin-left:8px;letter-spacing:.04em}
-.ver{font-size:10px;color:var(--tx3);background:var(--bg3);border:1px solid var(--bd);padding:2px 8px;border-radius:20px;font-family:var(--mono)}
-.srchwrap{margin-left:auto;position:relative}
+.logo{font-family:var(--mono);font-size:12px;font-weight:600;color:#60a5fa;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.logo-full{display:inline}
+.logo-short{display:none}
+.ver{font-size:10px;color:var(--tx3);background:var(--bg3);border:1px solid var(--bd);padding:2px 7px;border-radius:20px;font-family:var(--mono);white-space:nowrap;flex-shrink:0}
+.srchwrap{position:relative;flex:1;min-width:0;max-width:200px;margin-left:auto}
 .srchwrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--tx3);pointer-events:none}
-#si{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:5px 10px 5px 28px;font-size:12px;color:var(--tx);width:170px;outline:none;font-family:var(--sans);transition:border-color .2s}
-#si:focus{border-color:#3b82f6}#si::placeholder{color:var(--tx3)}
-.tot{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+#si{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:5px 10px 5px 28px;font-size:12px;color:var(--tx);width:100%;outline:none;font-family:var(--sans);transition:border-color .2s}
+#si:focus{border-color:var(--accent)}#si::placeholder{color:var(--tx3)}
+.tot{font-family:var(--mono);font-size:11px;color:var(--tx3);white-space:nowrap;flex-shrink:0}
 
-/* LAYOUT */
-.wrap{display:flex;flex:1;overflow:hidden}
+/* hamburger — hidden on desktop */
+.hamburger{display:none;align-items:center;justify-content:center;background:none;border:1px solid var(--bd);border-radius:7px;cursor:pointer;width:34px;height:30px;flex-shrink:0;color:var(--tx2);transition:all .2s}
+.hamburger:hover{border-color:var(--accent);color:var(--tx)}
+.hamburger svg{width:16px;height:16px}
 
-/* SIDEBAR */
-.sb{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--bd);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+/* ── MAIN LAYOUT ── */
+.wrap{display:flex;flex:1;overflow:hidden;position:relative}
+
+/* ── SIDEBAR ── */
+.sb{
+  width:var(--sb-w);min-width:var(--sb-w);
+  background:var(--bg2);border-right:1px solid var(--bd);
+  overflow-y:auto;flex-shrink:0;
+  scrollbar-width:thin;scrollbar-color:var(--bd) transparent;
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
 .sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
 
+/* overlay — mobile only */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;opacity:0;transition:opacity .28s}
+.overlay.on{opacity:1}
+
+/* sidebar search results */
 #sr{display:none;flex-direction:column;padding:6px}
 #sr.on{display:flex}
 .sri{background:none;border:none;cursor:pointer;text-align:left;padding:7px 10px;border-radius:6px;margin-bottom:2px;transition:background .15s;width:100%}
@@ -38,31 +71,30 @@ body{background:var(--bg);color:var(--tx);font-family:var(--sans);display:flex;f
 .sri-c{font-size:10px;margin-top:2px}
 
 .cat-group{border-bottom:1px solid var(--bd)}
-.cat-hdr{display:flex;align-items:center;gap:7px;width:100%;background:none;border:none;cursor:pointer;padding:9px 12px;color:var(--cc);font-size:11px;font-weight:700;letter-spacing:.07em;text-align:left;font-family:var(--sans);transition:background .15s}
-.cat-hdr:hover{background:rgba(255,255,255,.02)}
+.cat-hdr{display:flex;align-items:center;gap:7px;width:100%;background:none;border:none;cursor:pointer;padding:10px 12px;color:var(--cc);font-size:11px;font-weight:700;letter-spacing:.07em;text-align:left;font-family:var(--sans);transition:background .15s}
+.cat-hdr:hover{background:rgba(255,255,255,.025)}
 .cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .carr{margin-left:auto;font-size:9px;transition:transform .2s}
 .carr.col{transform:rotate(-90deg)}
 .citems.col{display:none}
-
-.tbtn{display:block;width:100%;background:none;border:none;border-left:2px solid transparent;cursor:pointer;padding:7px 12px 7px 20px;font-size:11.5px;color:var(--tx2);text-align:left;transition:all .15s;font-family:var(--sans);line-height:1.4}
+.tbtn{display:block;width:100%;background:none;border:none;border-left:2px solid transparent;cursor:pointer;padding:8px 12px 8px 20px;font-size:12px;color:var(--tx2);text-align:left;transition:all .15s;font-family:var(--sans);line-height:1.4}
 .tbtn:hover{color:var(--tx);background:rgba(255,255,255,.035)}
 .tbtn.on{border-left-color:var(--cc);background:color-mix(in srgb,var(--cc) 11%,transparent);color:#dde9ff}
 
-/* CONTENT */
-.cnt{flex:1;overflow-y:auto;padding:28px 32px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+/* ── CONTENT ── */
+.cnt{flex:1;overflow-y:auto;padding:28px 32px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent;min-width:0}
 .cnt::-webkit-scrollbar{width:4px}.cnt::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
 
 .panel{max-width:880px}
 .phdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:14px}
 .pcat{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
 .ptitle{font-size:24px;font-weight:700;color:#e0ebff;margin-bottom:6px;line-height:1.2}
-.pdesc{font-size:13px;color:var(--tx2);line-height:1.75;max-width:580px}
+.pdesc{font-size:13px;color:var(--tx2);line-height:1.75;max-width:600px}
 .cpybtn{flex-shrink:0;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;color:var(--tx2);font-size:12px;padding:7px 15px;cursor:pointer;transition:all .2s;font-family:var(--sans)}
-.cpybtn:hover{border-color:#3b82f6;color:var(--tx)}
+.cpybtn:hover{border-color:var(--accent);color:var(--tx)}
 .cpybtn.ok{background:rgba(16,185,129,.13);border-color:rgba(16,185,129,.4);color:#6ee7b7}
 
-/* CODE */
+/* ── CODE BLOCK ── */
 .cwrap{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:24px}
 .ctop{display:flex;align-items:center;gap:7px;padding:9px 14px;background:rgba(255,255,255,.018);border-bottom:1px solid var(--bd)}
 .cdots span{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--bd);margin-right:4px}
@@ -70,24 +102,112 @@ body{background:var(--bg);color:var(--tx);font-family:var(--sans);display:flex;f
 .cinner{padding:18px 18px 18px 0;overflow-x:auto;white-space:pre;font-family:var(--mono);font-size:12.5px;line-height:1.7;tab-size:4}
 .ln{display:inline-block;color:var(--tx3);text-align:right;width:34px;min-width:34px;padding-right:14px;user-select:none;font-size:11px}
 
-/* Syntax */
-.kw{color:#60a5fa;font-weight:600}.pp{color:#a78bfa}.str{color:#fbbf24}.num{color:#f87171}.cmt{color:#3d5470;font-style:italic}.cls{color:#34d399}.op{color:#f472b6}.brk{color:#e5c07b}
+/* Syntax highlight */
+.kw{color:#60a5fa;font-weight:600}.pp{color:#a78bfa}.str{color:#fbbf24}
+.num{color:#f87171}.cmt{color:#3d5470;font-style:italic}.cls{color:#34d399}
+.op{color:#f472b6}.brk{color:#e5c07b}
 
-/* NAV */
+/* ── NAV BUTTONS ── */
 .navrow{display:flex;align-items:center;justify-content:space-between;margin-top:4px;margin-bottom:20px}
 .nvbtn{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;color:var(--tx2);font-size:12px;padding:7px 16px;cursor:pointer;transition:all .2s;font-family:var(--sans)}
-.nvbtn:hover:not(:disabled){border-color:#3b82f6;color:var(--tx)}
+.nvbtn:hover:not(:disabled){border-color:var(--accent);color:var(--tx)}
 .nvbtn:disabled{opacity:.3;cursor:not-allowed}
 .nvpos{font-family:var(--mono);font-size:11px;color:var(--tx3)}
 
-/* SEARCH HIGHLIGHT */
-mark{background:rgba(251,191,36,.22);border-radius:2px;color:#fbbf24}
+/* ── BOTTOM NAV BAR (mobile) ── */
+.botnav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);border-top:1px solid var(--bd);
+  padding:8px 16px 12px;z-index:190;
+  gap:10px;
+}
+
+/* ── RESPONSIVE ── */
+
+/* Tablet: 768px–1023px */
+@media(max-width:1023px){
+  :root{--sb-w:190px}
+  .logo-full{display:none}
+  .logo-short{display:inline}
+  .ver{display:none}
+  .cnt{padding:20px 20px}
+  .ptitle{font-size:20px}
+  .cinner{font-size:12px}
+}
+
+/* Mobile: ≤767px */
+@media(max-width:767px){
+  :root{--top-h:52px}
+  body{overflow:hidden}
+
+  /* Topbar reorganised */
+  .tls{display:none}
+  .logo{font-size:13px;font-weight:700}
+  .ver{display:none}
+  .tot{display:none}
+  .hamburger{display:flex}
+  .srchwrap{max-width:none;flex:1}
+
+  /* Sidebar becomes a slide-in drawer */
+  .sb{
+    position:fixed;top:0;left:0;bottom:0;
+    width:80vw;max-width:300px;
+    z-index:160;
+    transform:translateX(-100%);
+    box-shadow:4px 0 24px rgba(0,0,0,.5);
+  }
+  .sb.open{transform:translateX(0)}
+  .overlay{display:block}
+
+  /* Content fills full width */
+  .cnt{padding:16px 14px 80px}
+
+  /* Panel tweaks */
+  .phdr{flex-direction:column;gap:10px}
+  .phdr > div{width:100%}
+  .cpybtn{align-self:flex-start}
+  .ptitle{font-size:19px}
+  .pdesc{font-size:12.5px;max-width:100%}
+
+  /* Code block */
+  .cinner{font-size:11.5px;padding:14px 14px 14px 0}
+  .ln{width:26px;min-width:26px;padding-right:10px;font-size:10px}
+  .cwrap{border-radius:10px}
+
+  /* Hide desktop nav row, show bottom nav */
+  .navrow{display:none}
+  .botnav{display:flex;align-items:center;justify-content:space-between}
+  .nvbtn-m{
+    background:var(--bg3);border:1px solid var(--bd);border-radius:8px;
+    color:var(--tx2);font-size:13px;padding:9px 18px;cursor:pointer;
+    transition:all .2s;font-family:var(--sans);flex:1;
+  }
+  .nvbtn-m:disabled{opacity:.3;cursor:not-allowed}
+  .nvbtn-m:not(:disabled):active{background:var(--bg);border-color:var(--accent);color:var(--tx)}
+  .nvpos-m{font-family:var(--mono);font-size:11px;color:var(--tx3);text-align:center;min-width:60px}
+  .menu-btn-top{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--bg3);border:1px solid var(--bd);border-radius:8px;
+    color:var(--tx2);font-size:12px;padding:8px 14px;
+    cursor:pointer;font-family:var(--sans);margin-bottom:12px;width:100%;justify-content:center;
+  }
+}
+
+/* Very small phones */
+@media(max-width:380px){
+  .logo{font-size:11px}
+  .cinner{font-size:10.5px}
+}
 </style>
 </head>
 <body>
 <div class="top">
   <div class="tls"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
-  <span class="logo">C++ 完整語法參考手冊</span>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="選單">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <span class="logo"><span class="logo-full">C++ 完整語法參考手冊</span><span class="logo-short">C++ 語法手冊</span></span>
   <span class="ver">44 個主題</span>
   <div class="srchwrap">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -95,8 +215,9 @@ mark{background:rgba(251,191,36,.22);border-radius:2px;color:#fbbf24}
   </div>
   <span class="tot" id="tot">1 / 44</span>
 </div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 <div class="wrap">
-  <div class="sb">
+  <div class="sb" id="sb">
     <div id="sr"></div>
     <div id="nav"><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(0)" style="--cc:#06b6d4"><span class="cdot" style="background:#06b6d4"></span><span>基礎語法</span><span class="carr" id="arr0">&#9662;</span></button><div class="citems" id="ci0"><button class="tbtn" id="b0_0" onclick="go(0,0)" style="--cc:#06b6d4">程式基本結構</button><button class="tbtn" id="b0_1" onclick="go(0,1)" style="--cc:#06b6d4">資料型別</button><button class="tbtn" id="b0_2" onclick="go(0,2)" style="--cc:#06b6d4">變數宣告與初始化</button><button class="tbtn" id="b0_3" onclick="go(0,3)" style="--cc:#06b6d4">輸入與輸出</button><button class="tbtn" id="b0_4" onclick="go(0,4)" style="--cc:#06b6d4">條件判斷</button><button class="tbtn" id="b0_5" onclick="go(0,5)" style="--cc:#06b6d4">基本迴圈</button></div></div><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(1)" style="--cc:#f97316"><span class="cdot" style="background:#f97316"></span><span>運算子</span><span class="carr" id="arr1">&#9662;</span></button><div class="citems" id="ci1"><button class="tbtn" id="b1_0" onclick="go(1,0)" style="--cc:#f97316">算術運算子</button><button class="tbtn" id="b1_1" onclick="go(1,1)" style="--cc:#f97316">關係與比較運算子</button><button class="tbtn" id="b1_2" onclick="go(1,2)" style="--cc:#f97316">邏輯運算子</button><button class="tbtn" id="b1_3" onclick="go(1,3)" style="--cc:#f97316">位元運算子</button><button class="tbtn" id="b1_4" onclick="go(1,4)" style="--cc:#f97316">賦值運算子</button><button class="tbtn" id="b1_5" onclick="go(1,5)" style="--cc:#f97316">型別轉換運算子</button><button class="tbtn" id="b1_6" onclick="go(1,6)" style="--cc:#f97316">其他運算子</button></div></div><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(2)" style="--cc:#3b82f6"><span class="cdot" style="background:#3b82f6"></span><span>迴圈控制</span><span class="carr" id="arr2">&#9662;</span></button><div class="citems" id="ci2"><button class="tbtn" id="b2_0" onclick="go(2,0)" style="--cc:#3b82f6">巢狀迴圈</button><button class="tbtn" id="b2_1" onclick="go(2,1)" style="--cc:#3b82f6">無窮迴圈</button><button class="tbtn" id="b2_2" onclick="go(2,2)" style="--cc:#3b82f6">break 與 continue</button><button class="tbtn" id="b2_3" onclick="go(2,3)" style="--cc:#3b82f6">goto 強制流程控制</button></div></div><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(3)" style="--cc:#10b981"><span class="cdot" style="background:#10b981"></span><span>函式</span><span class="carr" id="arr3">&#9662;</span></button><div class="citems" id="ci3"><button class="tbtn" id="b3_0" onclick="go(3,0)" style="--cc:#10b981">基本函式</button><button class="tbtn" id="b3_1" onclick="go(3,1)" style="--cc:#10b981">帶有參數的函式</button><button class="tbtn" id="b3_2" onclick="go(3,2)" style="--cc:#10b981">函式的回傳值</button><button class="tbtn" id="b3_3" onclick="go(3,3)" style="--cc:#10b981">局部變數</button><button class="tbtn" id="b3_4" onclick="go(3,4)" style="--cc:#10b981">全域變數</button><button class="tbtn" id="b3_5" onclick="go(3,5)" style="--cc:#10b981">外部變數 (extern)</button><button class="tbtn" id="b3_6" onclick="go(3,6)" style="--cc:#10b981">行內函式 (inline)</button><button class="tbtn" id="b3_7" onclick="go(3,7)" style="--cc:#10b981">聚合函式（函式指標）</button><button class="tbtn" id="b3_8" onclick="go(3,8)" style="--cc:#10b981">標準函式庫：數學運算</button><button class="tbtn" id="b3_9" onclick="go(3,9)" style="--cc:#10b981">標準函式庫：時間函式</button><button class="tbtn" id="b3_10" onclick="go(3,10)" style="--cc:#10b981">函式多載</button><button class="tbtn" id="b3_11" onclick="go(3,11)" style="--cc:#10b981">遞迴函式</button></div></div><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(4)" style="--cc:#f59e0b"><span class="cdot" style="background:#f59e0b"></span><span>陣列與字串</span><span class="carr" id="arr4">&#9662;</span></button><div class="citems" id="ci4"><button class="tbtn" id="b4_0" onclick="go(4,0)" style="--cc:#f59e0b">陣列</button><button class="tbtn" id="b4_1" onclick="go(4,1)" style="--cc:#f59e0b">字元陣列</button><button class="tbtn" id="b4_2" onclick="go(4,2)" style="--cc:#f59e0b">多維陣列</button></div></div><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(5)" style="--cc:#ef4444"><span class="cdot" style="background:#ef4444"></span><span>指標與記憶體</span><span class="carr" id="arr5">&#9662;</span></button><div class="citems" id="ci5"><button class="tbtn" id="b5_0" onclick="go(5,0)" style="--cc:#ef4444">指標與參照</button><button class="tbtn" id="b5_1" onclick="go(5,1)" style="--cc:#ef4444">指標與陣列</button><button class="tbtn" id="b5_2" onclick="go(5,2)" style="--cc:#ef4444">指標陣列</button><button class="tbtn" id="b5_3" onclick="go(5,3)" style="--cc:#ef4444">動態記憶體配置</button><button class="tbtn" id="b5_4" onclick="go(5,4)" style="--cc:#ef4444">參考型別變數與別名</button><button class="tbtn" id="b5_5" onclick="go(5,5)" style="--cc:#ef4444">傳址呼叫</button><button class="tbtn" id="b5_6" onclick="go(5,6)" style="--cc:#ef4444">傳參考呼叫</button><button class="tbtn" id="b5_7" onclick="go(5,7)" style="--cc:#ef4444">main 函式的參數</button></div></div><div class="cat-group"><button class="cat-hdr" onclick="toggleCat(6)" style="--cc:#8b5cf6"><span class="cdot" style="background:#8b5cf6"></span><span>物件導向</span><span class="carr" id="arr6">&#9662;</span></button><div class="citems" id="ci6"><button class="tbtn" id="b6_0" onclick="go(6,0)" style="--cc:#8b5cf6">物件導向與類別</button><button class="tbtn" id="b6_1" onclick="go(6,1)" style="--cc:#8b5cf6">類別的成員函式</button><button class="tbtn" id="b6_2" onclick="go(6,2)" style="--cc:#8b5cf6">常數資料成員</button><button class="tbtn" id="b6_3" onclick="go(6,3)" style="--cc:#8b5cf6">靜態資料成員</button></div></div></div>
   </div>
@@ -1687,14 +1808,22 @@ function go(c,i,scroll=true){
   const key=c+'_'+i;
   if(!done[key]){done[key]=1;const el=document.getElementById('c'+c+'_'+i);if(el)el.innerHTML=hl(el.textContent);}
   const idx=FLAT.findIndex(f=>f.ci===c&&f.ii===i);
-  document.getElementById('tot').textContent=(idx+1)+' / '+TOTAL;
-  // update nav buttons
+  const posStr=(idx+1)+' / '+TOTAL;
+  document.getElementById('tot').textContent=posStr;
+  // mobile bottom nav
+  const mp=document.getElementById('mPos');
+  if(mp)mp.textContent=posStr;
+  const mprev=document.getElementById('mPrev');
+  const mnext=document.getElementById('mNext');
+  if(mprev)mprev.disabled=(idx===0);
+  if(mnext)mnext.disabled=(idx===TOTAL-1);
+  // desktop nav buttons
   const pb=document.getElementById('prev'+c+'_'+i);
   const nb=document.getElementById('next'+c+'_'+i);
   const pp=document.getElementById('pos'+c+'_'+i);
   if(pb)pb.disabled=(idx===0);
   if(nb)nb.disabled=(idx===TOTAL-1);
-  if(pp)pp.textContent=(idx+1)+' / '+TOTAL;
+  if(pp)pp.textContent=posStr;
   if(scroll)document.getElementById('cnt').scrollTop=0;
 }
 
@@ -1736,7 +1865,26 @@ function searchGo(c,i){
   document.getElementById('si').value='';
   search('');
   go(c,i);
+  closeSidebar();
 }
+
+// Sidebar toggle (mobile)
+function toggleSidebar(){
+  const sb=document.getElementById('sb');
+  const ov=document.getElementById('overlay');
+  if(sb.classList.contains('open')){closeSidebar();}
+  else{sb.classList.add('open');ov.classList.add('on');document.body.style.overflow='hidden';}
+}
+function closeSidebar(){
+  const sb=document.getElementById('sb');
+  const ov=document.getElementById('overlay');
+  sb.classList.remove('open');
+  ov.classList.remove('on');
+  document.body.style.overflow='';
+}
+
+// Close sidebar when a topic is selected on mobile
+const origGo = go;
 
 go(0,0);
 
@@ -1746,6 +1894,20 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();const n=FLAT[idx+1];if(n)go(n.ci,n.ii);}
   else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();const n=FLAT[idx-1];if(n)go(n.ci,n.ii);}
 });
+
+// Close sidebar on topic button click (mobile)
+document.querySelectorAll('.tbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(window.innerWidth<=767) closeSidebar();
+  });
+});
 </script>
+
+<!-- Bottom navigation bar (mobile) -->
+<div class="botnav" id="botnav">
+  <button class="nvbtn-m" id="mPrev" onclick="step(-1)">&#8592; 上一個</button>
+  <span class="nvpos-m" id="mPos">1 / 44</span>
+  <button class="nvbtn-m" id="mNext" onclick="step(1)">下一個 &#8594;</button>
+</div>
 </body>
 </html>
