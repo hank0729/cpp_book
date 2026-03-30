@@ -363,7 +363,9 @@
         }
         
         .panel {
-            max-width: 880px
+            max-width: 880px;
+            min-width: 0;
+            width: 100%
         }
         
         .phdr {
@@ -427,7 +429,9 @@
             border: 1px solid var(--bd);
             border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 24px
+            margin-bottom: 24px;
+            min-width: 0;
+            max-width: 100%
         }
         
         .ctop {
@@ -461,7 +465,12 @@
             font-family: var(--mono);
             font-size: 12.5px;
             line-height: 1.7;
-            tab-size: 4
+            tab-size: 4;
+            max-width: 100%;
+            min-width: 0;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+            touch-action: pan-x pan-y
         }
         
         .ln {
@@ -689,10 +698,12 @@
                 font-size: 12.5px;
                 max-width: 100%
             }
-            /* Code block */
+            /* Code block: horizontal scroll on .cwrap so iOS reliably pans wide code */
             .cinner {
                 font-size: 11.5px;
-                padding: 14px 14px 14px 0
+                padding: 14px 14px 14px 0;
+                overflow-x: visible;
+                touch-action: inherit
             }
             .ln {
                 width: 26px;
@@ -701,7 +712,10 @@
                 font-size: 10px
             }
             .cwrap {
-                border-radius: 10px
+                border-radius: 10px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                touch-action: pan-x pan-y
             }
             /* Hide desktop nav row, show bottom nav */
             .navrow {
@@ -1910,10 +1924,15 @@
             ii = 0;
         const done = {};
 
+        /** Merge lines broken only for HTML source wrapping (newline + long run of spaces). */
+        function normalizeCodeText(s) {
+            return s.replace(/\r\n/g, '\n').replace(/\n {22,}/g, ' ').trim();
+        }
+
         function hl(code) {
             const KW = new Set(['int', 'double', 'float', 'char', 'bool', 'void', 'string', 'auto', 'const', 'static', 'extern', 'inline', 'return', 'if', 'else', 'for', 'while', 'do', 'break', 'continue', 'goto', 'new', 'delete', 'class', 'struct', 'public', 'private', 'protected', 'virtual', 'override', 'nullptr', 'true', 'false', 'this', 'using', 'namespace', 'typedef', 'template', 'typename', 'cout', 'cin', 'endl', 'sizeof', 'switch', 'case', 'default', 'short', 'long', 'unsigned', 'signed', 'wchar_t', 'constexpr', 'decltype', 'mutable', 'explicit', 'operator', 'friend', 'enum', 'union', 'try', 'catch', 'throw', 'include', 'define', 'pragma', 'make_unique', 'make_shared']);
             const e = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            const lines = code.split('\n');
+            const lines = normalizeCodeText(code).split('\n');
             return lines.map((line, li) => {
                 let r = '<span class="ln">' + (li + 1) + '</span>';
                 const t = line.trimStart();
