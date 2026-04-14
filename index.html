@@ -2159,3 +2159,235 @@
 </body>
 
 </html>
+
+
+
+
+
+#include <iostream>
+#include <cmath>
+#include <string>
+
+const int MAX_STARS = 20;   // 最大星星數
+const double T_MIN  = 1.0;
+const double T_MAX  = 5.0;
+const double STEP   = 1.0 / 100.0;
+
+std::string generateStars(int count) {
+if (count < 0) count = 0;
+return std::string(count, ‘*’);
+}
+
+int main() {
+for (double t = T_MIN; t <= T_MAX + 1e-9; t += STEP) {
+double y = std::exp(-t) * std::cos(2.0 * M_PI * t);
+
+```
+    // |y| 映射到星星數量
+    int stars = (int)std::round(std::abs(y) * MAX_STARS);
+    std::cout << generateStars(stars) << "\n";
+}
+return 0;
+```
+
+}
+
+
+在 C++ 裡，「#define 定義函式」其實是用 巨集（macro），不是一般真正的函式。它是由 預處理器直接做文字替換。
+
+我幫你分三種講清楚👇
+
+⸻
+
+✅ 1. 最基本：define 函式型巨集
+#include <iostream>
+using namespace std;
+
+#define SQUARE(x) ((x) * (x))
+
+int main() {
+    cout << SQUARE(5);  // 25
+}
+
+👉 展開後其實是：
+cout << ((5) * (5));
+
+在 C++ 裡這幾個都很常用，直接整理給你。
+
+1. 求自然常數 e
+
+方法一：用 exp(1.0)
+
+e^1 = e，所以最常見是這樣寫：
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main() {
+    double e = exp(1.0);
+    cout << "e = " << e << endl;
+    return 0;
+}
+方法二：自己定義
+const double e = 2.718281828459045;
+2. 算三角函數 sin、cos、tan
+
+C++ 用 <cmath> 裡的函式：
+	•	sin(x)
+	•	cos(x)
+	•	tan(x)
+
+注意：角度要用弧度，不是度數。
+
+例子：算 30 度的 sin、cos、tan
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main() {
+    double degree = 30.0;
+    double rad = degree * M_PI / 180.0;  // 角度轉弧度
+
+    cout << "sin(30) = " << sin(rad) << endl;
+    cout << "cos(30) = " << cos(rad) << endl;
+    cout << "tan(30) = " << tan(rad) << endl;
+
+    return 0;
+}
+如果 M_PI 不能用
+
+有些編譯器不一定直接支援 M_PI，那你可以自己寫：
+const double PI = 3.14159265358979323846;
+double rad = degree * PI / 180.0;
+3. ctime 怎麼求程式執行時間
+
+如果你是想用比較傳統的方式，可以用 clock()。
+
+用 ctime / ctime.h 的 clock()
+#include <iostream>
+#include <ctime>
+using namespace std;
+
+int main() {
+    clock_t start = clock();
+
+    // 這裡放你要測試的程式
+    for (long long i = 0; i < 100000000; i++) {
+    }
+
+    clock_t end = clock();
+
+    double elapsed = double(end - start) / CLOCKS_PER_SEC;
+    cout << "執行時間: " << elapsed << " 秒" << endl;
+
+    return 0;
+}
+重點
+	•	clock() 會回傳 CPU 時間
+	•	CLOCKS_PER_SEC 是每秒的時脈數
+	•	end - start 就是執行花掉的時脈數
+
+⸻
+
+4. 現在更推薦的方式：chrono
+
+這比 ctime 更準也更常用。
+#include <iostream>
+#include <chrono>
+using namespace std;
+using namespace chrono;
+
+int main() {
+    auto start = high_resolution_clock::now();
+
+    // 要測試的程式
+    for (long long i = 0; i < 100000000; i++) {
+    }
+
+    auto end = high_resolution_clock::now();
+
+    auto duration = duration_cast<milliseconds>(end - start);
+    cout << "執行時間: " << duration.count() << " 毫秒" << endl;
+
+    return 0;
+}
+5. 一個整合範例
+#include <iostream>
+#include <cmath>
+#include <ctime>
+using namespace std;
+
+int main() {
+    clock_t start = clock();
+
+    double e = exp(1.0);
+    const double PI = 3.14159265358979323846;
+
+    double degree = 45.0;
+    double rad = degree * PI / 180.0;
+
+    cout << "e = " << e << endl;
+    cout << "sin(45) = " << sin(rad) << endl;
+    cout << "cos(45) = " << cos(rad) << endl;
+    cout << "tan(45) = " << tan(rad) << endl;
+
+    clock_t end = clock();
+    double elapsed = double(end - start) / CLOCKS_PER_SEC;
+
+    cout << "執行時間 = " << elapsed << " 秒" << endl;
+
+    return 0;
+}
+
+6. 你要記的重點
+	•	e：exp(1.0)
+	•	三角函數：sin()、cos()、tan()
+	•	三角函數輸入要用弧度
+	•	測時間可用：
+	•	傳統：clock()
+	•	推薦：chrono
+
+如果你要，我可以直接幫你整理成一份「C++ 數學函式速查表」。
+
+
+#include <iostream>
+#include <cmath>
+#include <ctime>
+
+using namespace std;
+
+int main() {
+    // ===== 計時開始 =====
+    clock_t start = clock();
+
+    // ===== 計算 e =====
+    double e = exp(1.0);
+
+    // ===== 定義 PI（Dev-C++ 不一定有 M_PI）=====
+    const double PI = 3.14159265358979323846;
+
+    // ===== 三角函數 =====
+    double degree = 45.0;
+    double rad = degree * PI / 180.0;
+
+    double s = sin(rad);
+    double c = cos(rad);
+    double t = tan(rad);
+
+    // ===== 輸出 =====
+    cout << "e = " << e << endl;
+    cout << "sin(45) = " << s << endl;
+    cout << "cos(45) = " << c << endl;
+    cout << "tan(45) = " << t << endl;
+
+    // ===== 計時結束 =====
+    clock_t end = clock();
+    double elapsed = double(end - start) / CLOCKS_PER_SEC;
+
+    cout << "執行時間 = " << elapsed << " 秒" << endl;
+
+    return 0;
+}
+
+
+
